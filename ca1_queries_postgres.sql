@@ -57,11 +57,11 @@ select * from movies where synopsis like '%Bilbo%';
 -- Find all movies that have a synopsis that contains the word "Gandalf"  --
 select * from movies where synopsis like '%Gandalf%'; 
 -- Find all movies that have a synopsis that contains the word "Bilbo" and not the word "Gandalf" --
-select * from movies where synopsis ilike '%Bilbao%' not ilike '%Gandalf%'; 
+select * from movies where synopsis ilike '%Bilbo%' and synopsis not ilike '%Gandalf%'; 
 -- Find all movies that have a synopsis that contains the word "dwarves" or "hobbit" --
-
+select * from movies where synopsis ilike '%dwarves%' or synopsis ilike '%hobbit%'; 
 -- Find all movies that have a synopsis that contains the word "gold" and "dragon" --
-
+select * from movies where synopsis ilike '%gold%' and synopsis ilike '%dragon%';
 
 -- 6. Delete Documents --
 -- Delete the movie "Pee Wee Herman's Big Adventure" --
@@ -70,6 +70,10 @@ delete from movies where title = 'Pee Wee Herman''s Big Adventure';
 delete from movies where title = 'Avatar';
 
 -- 7. Relationships --
+create table users(id SERIAL PRIMARY KEY, username text, first_name text, last_name text);
+insert into users(username, first_name, last_name) VALUES ('GoodGuyGreg', 'Good Guy', 'Greg');
+insert into users(username, first_name, last_name) VALUES ('ScumbagSteve', 'Scumbag', 'Steve');
+
 create table posts(id SERIAL PRIMARY KEY, username text, title text, body text);
 insert into posts(username, title, body) VALUES ('GoodGuyGreg', 'Passes out at party', 'Wakes up early and cleans house');
 insert into posts(username, title, body) VALUES ('GoodGuyGreg', 'Steals your identity', 'Raises your credit score');
@@ -79,35 +83,26 @@ insert into posts(username, title, body) VALUES ('ScumbagSteve', 'Borrows everyt
 insert into posts(username, title, body) VALUES ('ScumbagSteve', 'Forks your repo on github', 'Sets to private');
 
 create table comments(id SERIAL PRIMARY KEY, username text, comment text, post int);
-insert into comments(username, comment, post) VALUES ('GoodGuyGreg', 'Hope you got a good deal!', );
-insert into comments(username, comment, post) VALUES ('GoodGuyGreg', 'What''s mine is yours!', );
-insert into comments(username, comment, post) VALUES ('GoodGuyGreg', 'Don''t violate the licensing agreement!', );
-insert into comments(username, comment, post) VALUES ('ScumbagSteve', 'It still isn''t clean', );
-insert into comments(username, comment, post) VALUES ('ScumbagSteve', 'Denied your PR cause I found a hack', );
+insert into comments(username, comment, post) VALUES ('GoodGuyGreg', 'Hope you got a good deal!', 4);
+insert into comments(username, comment, post) VALUES ('GoodGuyGreg', 'What''s mine is yours!', 5);
+insert into comments(username, comment, post) VALUES ('GoodGuyGreg', 'Don''t violate the licensing agreement!', 6);
+insert into comments(username, comment, post) VALUES ('ScumbagSteve', 'It still isn''t clean', 1);
+insert into comments(username, comment, post) VALUES ('ScumbagSteve', 'Denied your PR cause I found a hack', 3);
 
 -- 8. Querying related collections --
 -- Find all users --
-
+select * from users;
 -- Find all posts --
-
+select * from posts;
 -- Find all posts that was authored by "GoodGuyGreg" --
-
+select * from posts where username = 'GoodGuyGreg';
 -- Find all posts that was authored by "ScumbagSteve" --
-
+select * from posts where username = 'ScumbagSteve ';
 -- Find all comments --
-
+select * from comments;
 -- Find all comments that was authored by "GoodGuyGreg" --
-
-
-
-
-
-
-
-
-
- 
-
-
- 
---select a.name,m.title,m.writer,m.year,m.franchise from movies m left outer join movies_actors ma on m.id = ma.movie_id left outer join actors a on a.id ma.actor_id;--
+select * from comments where username = 'GoodGuyGreg';
+-- Find all comments that was authored by "ScumbagSteve" --
+select * from comments where username = 'ScumbagSteve';
+-- Find all comments belonging to the post "Reports a bug in your code" --
+select * from comments where id=(select id from post where title = 'Reports a bug in your code');
